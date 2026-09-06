@@ -58,6 +58,16 @@ class FluxVoice(StrEnum):
 _voice_adapter = TypeAdapter(FluxVoice)
 
 
+def _raise_for_status(res: httpx.Response) -> None:
+    if res.is_error:
+        detail = res.headers.get("dg-error") or res.text
+        raise httpx.HTTPStatusError(
+            f"{res.status_code} {res.reason_phrase}: {detail}",
+            request=res.request,
+            response=res,
+        )
+
+
 def speak(
     text: str,
     *,
@@ -76,7 +86,7 @@ def speak(
         json={"text": text},
         timeout=timeout,
     )
-    res.raise_for_status()
+    _raise_for_status(res)
     if output:
         Path(output).write_bytes(res.content)
     return res.content
@@ -100,7 +110,7 @@ async def aspeak(
             headers={"Authorization": f"Token {api_key or os.environ['DEEPGRAM_KEY']}"},
             json={"text": text},
         )
-    res.raise_for_status()
+    _raise_for_status(res)
     if output:
         Path(output).write_bytes(res.content)
     return res.content
