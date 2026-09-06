@@ -11,6 +11,7 @@ name = "agents-lab"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "httpx2" },
     { name = "pydantic-ai-slim", extra = ["prefect"] },
 ]
 
@@ -20,7 +21,10 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "pydantic-ai-slim", extras = ["prefect"] }]
+requires-dist = [
+    { name = "httpx2", specifier = ">=2.12.0" },
+    { name = "pydantic-ai-slim", extras = ["prefect"] },
+]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pre-commit" }]

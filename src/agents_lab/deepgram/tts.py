@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-import httpx
+import httpx2
 from pydantic import TypeAdapter
 
 URL = "https://api.deepgram.com/v2/speak"
@@ -58,10 +58,10 @@ class FluxVoice(StrEnum):
 _voice_adapter = TypeAdapter(FluxVoice)
 
 
-def _raise_for_status(res: httpx.Response) -> None:
+def _raise_for_status(res: httpx2.Response) -> None:
     if res.is_error:
         detail = res.headers.get("dg-error") or res.text
-        raise httpx.HTTPStatusError(
+        raise httpx2.HTTPStatusError(
             f"{res.status_code} {res.reason_phrase}: {detail}",
             request=res.request,
             response=res,
@@ -79,7 +79,7 @@ def speak(
 ) -> bytes:
     """Synthesize text using Deepgram Flux TTS REST API."""
     voice = _voice_adapter.validate_python(model)
-    res = httpx.post(
+    res = httpx2.post(
         URL,
         params={"model": str(voice), **params},
         headers={"Authorization": f"Token {api_key or os.environ['DEEPGRAM_KEY']}"},
@@ -103,7 +103,7 @@ async def aspeak(
 ) -> bytes:
     """Synthesize text asynchronously using Deepgram Flux TTS REST API."""
     voice = _voice_adapter.validate_python(model)
-    async with httpx.AsyncClient(timeout=timeout) as client:
+    async with httpx2.AsyncClient(timeout=timeout) as client:
         res = await client.post(
             URL,
             params={"model": str(voice), **params},

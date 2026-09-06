@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "Experiments with Pydantic AI agents and Prefect workflows"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["pydantic-ai-slim[prefect]"]
+dependencies = [
+    "httpx2>=2.12.0",
+    "pydantic-ai-slim[prefect]",
+]
 
 [dependency-groups]
 dev = ["pre-commit"]
